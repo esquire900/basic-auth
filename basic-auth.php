@@ -9,14 +9,16 @@
  */
 
 function json_basic_auth_handler( $user ) {
-	global $wp_json_basic_auth_error;
-
-	$wp_json_basic_auth_error = null;
 
 	// Don't authenticate twice
 	if ( ! empty( $user ) ) {
 		return $user;
 	}
+
+	// Only authenticate for the REST APIs
+	$checkfor = home_url(rest_get_url_prefix(), 'relative');
+	if (0 !== strpos($_SERVER['REQUEST_URI'], $checkfor))
+		return $user;
 
 	// Check that we're trying to authenticate
 	if ( !isset( $_SERVER['PHP_AUTH_USER'] ) ) {
@@ -39,27 +41,18 @@ function json_basic_auth_handler( $user ) {
 	add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
 
 	if ( is_wp_error( $user ) ) {
-		if ( in_array( $user->get_error_code(), array( "incorrect_password", "invalid_username" ), true ) ) {
-			$user = new WP_Error( 'rest_not_logged_in', __( 'You are not currently logged in.' ), array( 'status' => 401 ) );
-		}
-		$wp_json_basic_auth_error = $user;
 		return null;
 	}
-
-	$wp_json_basic_auth_error = true;
-
 	return $user->ID;
 }
 add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
 
 function json_basic_auth_error( $error ) {
 	// Passthrough other errors
-	if ( ! empty( $error ) ) {
+	if ( !empty( $error ) ) {
 		return $error;
 	}
-
-	global $wp_json_basic_auth_error;
-
-	return $wp_json_basic_auth_error;
+	if ( !is_user_logged_in() )
+		return new WP_Error( 'rest_not_logged_in', __( 'You are not currently logged in.' ), array( 'status' => 401 ) );
 }
 add_filter( 'rest_authentication_errors', 'json_basic_auth_error' );
