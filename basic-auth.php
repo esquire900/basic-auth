@@ -8,6 +8,17 @@
  * Plugin URI: https://github.com/diablodale/Basic-Auth
  */
 
+function rest_basic_authentication_register_routes( $response_object ) {
+	if ( empty( $response_object->data['authentication'] ) ) {
+		$response_object->data['authentication'] = array();
+	}
+	$response_object->data['authentication']['Basic'] = array(
+		'version' => '0.2',
+	);
+	return $response_object;
+}
+add_filter( 'rest_index', 'rest_basic_authentication_register_routes' );
+
 function rest_basic_authentication_handler( $user ) {
 
 	// Don't authenticate twice
