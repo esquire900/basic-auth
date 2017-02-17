@@ -8,7 +8,7 @@
  * Plugin URI: https://github.com/diablodale/Basic-Auth
  */
 
-function json_basic_authentication_handler( $user ) {
+function rest_basic_authentication_handler( $user ) {
 
 	// Don't authenticate twice
 	if ( ! empty( $user ) ) {
@@ -53,9 +53,9 @@ function json_basic_authentication_handler( $user ) {
 	}
 	return $user->ID;
 }
-add_filter( 'determine_current_user', 'json_basic_authentication_handler', 20 );
+add_filter( 'determine_current_user', 'rest_basic_authentication_handler', 20 );
 
-function json_basic_authorization_handler( $error ) {
+function rest_basic_authorization_handler( $error ) {
 	// Passthrough other errors
 	if ( !empty( $error ) ) {
 		return $error;
@@ -63,4 +63,4 @@ function json_basic_authorization_handler( $error ) {
 	if ( !is_user_logged_in() )
 		return new WP_Error( 'rest_not_logged_in', __( 'You are not currently logged in.' ), array( 'status' => 401 ) );
 }
-add_filter( 'rest_authentication_errors', 'json_basic_authorization_handler' );
+add_filter( 'rest_authentication_errors', 'rest_basic_authorization_handler' );
