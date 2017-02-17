@@ -16,7 +16,7 @@ function json_basic_authentication_handler( $user ) {
 	}
 
 	// Check that we're trying to authenticate
-	if ( !isset( $_SERVER['PHP_AUTH_USER'] ) ) {
+	if ( !isset( $_SERVER['PHP_AUTH_USER'] ) || !isset( $_SERVER['PHP_AUTH_PW'] )) {
 		return $user;
 	}
 
@@ -24,6 +24,16 @@ function json_basic_authentication_handler( $user ) {
 	$checkfor = home_url(rest_get_url_prefix(), 'relative');
 	if (0 !== strpos($_SERVER['REQUEST_URI'], $checkfor))
 		return $user;
+
+	// Check that we're over HTTPS
+	if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+		 (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+		 (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on') ) {
+		// using https; continue
+	}
+	else {
+		return $user;
+	}
 
 	$username = $_SERVER['PHP_AUTH_USER'];
 	$password = $_SERVER['PHP_AUTH_PW'];
