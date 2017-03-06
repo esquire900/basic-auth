@@ -1,11 +1,13 @@
 <?php
 /**
- * Plugin Name: REST API Basic Authentication
- * Description: Basic Authentication handler for the Wordpress REST API. Recommended only for development and debugging purposes
+ * Plugin Name: REST API Basic Authentication over HTTPS
+ * Plugin URI: https://github.com/diablodale/Basic-Auth
+ * Description: Basic Authentication over HTTPS for the Wordpress REST API.
  * Author: Dale Phurrough
  * Author URI: https://hidale.com/
  * Version: 0.2
- * Plugin URI: https://github.com/diablodale/Basic-Auth
+ * License: MIT
+ * License URI: https://opensource.org/licenses/MIT
  */
 
 function rest_basic_authentication_register_routes( $response_object ) {
