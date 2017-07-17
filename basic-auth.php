@@ -57,9 +57,9 @@ function rest_basic_authentication_handler( $user ) {
 	 * recursion and a stack overflow unless the current function is removed from the determine_current_user
 	 * filter during authentication.
 	 */
-	remove_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
+	remove_filter( 'determine_current_user', 'rest_basic_authentication_handler', 20 );
 	$user = wp_authenticate( $username, $password );
-	add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
+	add_filter( 'determine_current_user', 'rest_basic_authentication_handler', 20 );
 
 	if ( is_wp_error( $user ) ) {
 		return null;
