@@ -1,8 +1,6 @@
 # Basic Authentication handler
-This plugin adds Basic Authentication over HTTPS to a WordPress site.
-It will only function over an HTTPS connection by design.
-This plugin is better suited for development and test scenarios.
-An [OAuth 1.0a][oauth] authentication handler is recommended for production.
+This plugin adds Basic Authentication to a WordPress site.
+I've added encryption to allow usage in production
 
 ## Installing
 1. Download the plugin into your plugins directory
