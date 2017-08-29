@@ -42,24 +42,15 @@ function rest_basic_authentication_handler($user)
         return $user;
     }
 
-    // Check that we're over HTTPS
-    if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
-        (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
-        (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on')) {
-        // using https; continue
-    } else {
-        return $user;
-    }
-
     $secret_file_path = './../.secret';
 
     if (file_exists($secret_file_path)) {
         $secret = file_get_contents($secret_file_path);
-    } else {
-        $secret = 'You-should-use-a-password-here';
+        $username = openssl_decrypt($_SERVER['PHP_AUTH_USER'], "AES-128-ECB", $secret);
+        $password = openssl_decrypt($_SERVER['PHP_AUTH_PW'], "AES-128-ECB", $secret);
+    }else{
+        return $user;
     }
-    $username = openssl_decrypt($_SERVER['PHP_AUTH_USER'], "AES-128-ECB", $secret);
-    $password = openssl_decrypt( $_SERVER['PHP_AUTH_PW'], "AES-128-ECB", $secret);
 
     /**
      * In multi-site, wp_authenticate_spam_check filter is run on authentication. This filter calls
